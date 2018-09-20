@@ -10,6 +10,7 @@ class ControllerBase
   def initialize(req, res)
     @res = res 
     @req = req
+    @already_built_response = false
   end
 
   # Helper method to alias @already_built_response
@@ -39,7 +40,13 @@ class ControllerBase
   # use ERB and binding to evaluate templates
   # pass the rendered html to render_content
   def render(template_name)
+    dir_path = File.dirname(__FILE__)
+    template_path = File.join(dir_path,"..", "views", self.class.name.underscore, "#{template_name}.html.erb")
+    template_code = File.read(template_path)
+    render_content(ERB.new(template_code).result(binding))
   end
+  
+  
 
   # method exposing a `Session` object
   def session
